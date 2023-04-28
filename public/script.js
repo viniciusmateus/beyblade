@@ -1,5 +1,5 @@
 let player = ["Gustavo", "Vinicius", "Vivi"],
-	beyblades = ["Gaianon G2", "Nightmare Luinor", "Spriggan Requiem"],
+	beyblades = [],
 	battleCount = 0;
 
 function createArrayPlayer() {
@@ -13,20 +13,29 @@ function createArrayPlayer() {
 		});
 }
 
-createArrayPlayer();
-
-function createArrayBeyblades() {
+(function () {
 	firebase
 		.database()
 		.ref("/beyblades")
 		.on("value", function (snapshot) {
 			snapshot.forEach(function (userSnapshot) {
-				beyblades.push(userSnapshot.key);
+				$("body").append('<input type="hidden" class="beybladesValue" value="' + userSnapshot.key + '" />');
 			});
 		});
-}
+})();
 
-createArrayBeyblades();
+console.log($(".beybladesValue").length);
+
+function createArray(target, arrayName) {
+	let inputHidden = $(target);
+	for (var i = 0; i < inputHidden.length; i++) {
+		if (inputHidden[i].value != "" && inputPoints[i].value != "") {
+			console.log(inputHidden[i].value);
+			arrayName.push(inputHidden[i].value);
+		}
+	}
+}
+createArray(".beybladesValue");
 
 function generateBattles(first, second) {
 	$("#fullPage .container").append('<table id="' + beyblades.indexOf(first) + beyblades.indexOf(second) + '" class="table table-dark table-adjust"><thead><tr><th scope="col">' + first + '</th><th></th><th scope="col">' + second + '</th></tr></thead><tbody class="lead"></tbody></table>');
