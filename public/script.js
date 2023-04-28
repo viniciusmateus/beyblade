@@ -1,5 +1,5 @@
 let player = ["Gustavo", "Vinicius", "Vivi"],
-	beyblades = ["1"],
+	beyblades = ["Gaianon G2", "Nightmare Luinor", "Spriggan Requiem"],
 	battleCount = 0;
 
 function createArrayPlayer() {
