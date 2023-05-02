@@ -15,10 +15,10 @@
 	<body>
 		<div id="fullPage" class="pb-5">
 			<div class="container text-center">
-				<div class="row bg-dark">
-					<div class="input-group m-3" style="width: 350px">
-						<label class="input-group-text bg-secondary text-white" for="inputGroupSelect01">Escolha a edição</label>
-						<select class="form-select" id="selectionEdition">
+				<div class="row bg-dark p-2">
+					<div class="col text-white text-end">Escolha a edição</div>
+					<div class="col text-start">
+						<select id="selectionEdition">
 							<option selected disabled>--</option>
 							<option value="1">1ª edição</option>
 							<option value="2" disabled>2ª edição (em breve)</option>
@@ -32,30 +32,37 @@
 					<h2 class="text-uppercase" style="display: none"><span id="titleEdition"></span>ª edição</h2>
 				</div>
 
-				<div class="row bg-dark pb-3 pt-2" style="display: none" id="podiums">
-					<div class="col-12 col-lg-6">
-						<div class="row">
+				<div class="row podiums" style="display: none">
+					<div class="col-12 col-lg-6" id="podiumBeyblade">
+						<div class="row bg-dark m-1 p-3">
 							<div class="col-12 text-white text-uppercase lead">
 								<p>Pontuação Beyblades</p>
 							</div>
 							<div class="col-12">
 								<div class="row d-flex align-items-end">
-									<div class="col-4">
-										<div class="mx-3 secondColocation">
-											<span id="secondBeyblade">Gustavo</span>
-											<p class="quoteText">Segundo</p>
+									<div class="col-12 col-md-4 order-1 order-md-2">
+										<div class="firstColocation">
+											<span class="d-block text-white bg-secondary quoteText">1º lugar</span>
+											<span class="placeName">Nightmare Luinor</span>
+											<span class="d-block display-4 points">151</span>
+											<span class="d-block quoteText textPoints">pontos</span>
 										</div>
 									</div>
-									<div class="col-4">
-										<div class="mx-3 firstColocation">
-											<span id="firstBeyblade">Vivi</span>
-											<p class="quoteText">Primeiro</p>
+									<div class="col-12 col-md-4 order-2 order-md-1">
+										<div class="secondColocation">
+											<span class="d-block text-white bg-secondary quoteText">2º lugar</span>
+											<span class="placeName">Gaianon G2</span>
+											<span class="d-block display-4 points">151</span>
+											<span class="d-block quoteText textPoints">pontos</span>
 										</div>
 									</div>
-									<div class="col-4">
-										<div class="mx-3 thirdColocation">
-											<span id="thirdBeyblade">Vinicius</span>
-											<p class="quoteText">Terceiro</p>
+
+									<div class="col-12 col-md-4 order-3">
+										<div class="thirdColocation">
+											<span class="d-block text-white bg-secondary quoteText">3º lugar</span>
+											<span class="placeName">Spriggan Requiem</span>
+											<span class="d-block display-4 points">151</span>
+											<span class="d-block quoteText textPoints">pontos</span>
 										</div>
 									</div>
 								</div>
@@ -63,29 +70,37 @@
 						</div>
 					</div>
 
-					<div class="col-12 col-lg-6 text-uppercase">
-						<div class="row">
+					<div class="col-12 col-lg-6" id="podiumPlayer">
+						<div class="row bg-dark m-1 p-3">
 							<div class="col-12 text-white text-uppercase lead">
 								<p>Pontuação Jogadores</p>
 							</div>
+
 							<div class="col-12">
 								<div class="row d-flex align-items-end">
-									<div class="col-4">
-										<div class="mx-3 secondColocation">
-											<span id="secondPlayer">Gustavo</span>
-											<p class="quoteText">Segundo</p>
+									<div class="col-12 col-md-4 order-1 order-md-2" style="display: none">
+										<div class="firstColocation">
+											<span class="d-block text-white bg-secondary quoteText">1º lugar</span>
+											<span class="placeName">Vivi</span>
+											<span class="d-block display-4 points">151</span>
+											<span class="d-block quoteText textPoints">pontos</span>
 										</div>
 									</div>
-									<div class="col-4">
-										<div class="mx-3 firstColocation">
-											<span id="firstPlayer">Vivi</span>
-											<p class="quoteText">Primeiro</p>
+									<div class="col-12 col-md-4 order-2 order-md-1" style="display: none">
+										<div class="secondColocation">
+											<span class="d-block text-white bg-secondary quoteText">2º lugar</span>
+											<span class="placeName">Gustavo</span>
+											<span class="d-block display-4 points">151</span>
+											<span class="d-block quoteText textPoints">pontos</span>
 										</div>
 									</div>
-									<div class="col-4">
-										<div class="mx-3 thirdColocation">
-											<span id="thirdPlayer">Vinicius</span>
-											<p class="quoteText">Terceiro</p>
+
+									<div class="col-12 col-md-4 order-3" style="display: none">
+										<div class="thirdColocation">
+											<span class="d-block text-white bg-secondary quoteText">3º lugar</span>
+											<span class="placeName">Vinicius</span>
+											<span class="d-block display-4 points">151</span>
+											<span class="d-block quoteText textPoints">ponto</span>
 										</div>
 									</div>
 								</div>

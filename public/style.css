@@ -46,19 +46,39 @@ thead th {
 	vertical-align: middle;
 }
 .firstColocation {
-	background: #ffbd1b;
-	height: 150px;
+	background: rgba(255, 206, 0, 1);
+	background: linear-gradient(135deg, rgba(255, 206, 0, 1) 0%, rgba(255, 248, 225, 1) 44%, rgba(255, 194, 0, 1) 100%);
+	height: 200px;
+	font-weight: bold;
+	color: rgba(117, 94, 0, 0.85);
 }
 .secondColocation {
-	background: #c0c0c0;
-	height: 100px;
+	background: rgb(139, 139, 139);
+	background: linear-gradient(135deg, rgba(139, 139, 139, 1) 0%, rgba(255, 255, 255, 1) 44%, rgba(78, 78, 78, 1) 100%);
+	height: 175px;
+	font-weight: bold;
+	color: rgba(61, 61, 61, 0.85);
 }
 .thirdColocation {
-	background: #cd7f32;
-	height: 50px;
+	background: rgb(175, 68, 0);
+	background: linear-gradient(135deg, rgba(175, 68, 0, 1) 0%, rgba(255, 194, 143, 1) 44%, rgba(140, 62, 0, 1) 100%);
+	height: 165px;
+	font-weight: bold;
+	color: rgba(100, 53, 24, 0.85);
 }
 .quoteText {
 	font-weight: bold;
 	text-transform: uppercase;
 	font-size: 10px;
+}
+#selectionEdition {
+	background: transparent;
+	border: 0px;
+	border-bottom: 1px solid #fff;
+	padding: 10px;
+	color: #fff;
+}
+#selectionEdition option {
+	background: #212529;
+	color: #fff;
 }

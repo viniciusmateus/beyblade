@@ -31,7 +31,80 @@ $("#selectionEdition").on("change", function () {
 	$("#titleEdition").text($(this).val()).parent().fadeIn();
 
 	//Adiciona função de aparecer somente se houver resultados
-	$("#podiums").fadeIn();
+	$(".podiums").fadeIn();
+
+	function getPodiums(database, target) {
+		let topRef = database.orderByValue().limitToLast(3),
+			i = 3,
+			text;
+
+		topRef.on("value", function (snapshot) {
+			// Array para armazenar os dados dos 3 colocados
+			let podiumData = [];
+
+			snapshot.forEach(function (childSnapshot) {
+				let refName = childSnapshot.key,
+					refPoints = childSnapshot.val();
+
+				switch (i) {
+					case 1:
+						text = "firstColocation";
+						break;
+					case 2:
+						text = "secondColocation";
+						break;
+					case 3:
+						text = "thirdColocation";
+						break;
+				}
+
+				// Adiciona os dados dos colocados ao array
+				podiumData.push({
+					name: refName,
+					points: refPoints,
+					text: text,
+				});
+
+				i--;
+			});
+
+			// Ordena o array pelos pontos em ordem decrescente
+			podiumData.sort(function (a, b) {
+				return b.points - a.points;
+			});
+
+			// Atualiza os dados nos elementos HTML com base no array ordenado
+			for (let j = 0; j < podiumData.length; j++) {
+				$(target + " ." + podiumData[j].text + " .placeName").text(podiumData[j].name);
+				$(target + " ." + podiumData[j].text + " .points").text(podiumData[j].points);
+
+				if (podiumData[j].points > 0) {
+					$(target + " ." + podiumData[j].text)
+						.parent()
+						.show();
+				} else {
+					$(target + " ." + podiumData[j].text)
+						.parent()
+						.hide();
+				}
+
+				if (podiumData[j].points > 1) {
+					$(target + " ." + podiumData[j].text + " .textPoints").text("pontos");
+				} else {
+					$(target + " ." + podiumData[j].text + " .textPoints").text("ponto");
+				}
+			}
+		});
+
+		// Escuta por mudanças em um nó filho específico
+		topRef.on("child_changed", function (snapshot) {
+			// Chama a função novamente para atualizar e reordenar os dados
+			getPodiums(database, target);
+		});
+	}
+
+	getPodiums(refBeyblades, "#podiumBeyblade");
+	getPodiums(refPlayer, "#podiumPlayer");
 
 	Promise.all([promise1, promise2])
 		.then(function (results) {
