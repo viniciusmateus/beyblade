@@ -30,9 +30,6 @@ $("#selectionEdition").on("change", function () {
 
 	$("#titleEdition").text($(this).val()).parent().fadeIn();
 
-	//Adiciona função de aparecer somente se houver resultados
-	$("#podiums").fadeIn();
-
 	Promise.all([promise1, promise2])
 		.then(function (results) {
 			// Os resultados são retornados como um array de snapshots

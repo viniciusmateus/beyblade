@@ -11,5 +11,3 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
-const refPlayer = database.ref("/player");
-const refBeyblades = database.ref("/beyblades");

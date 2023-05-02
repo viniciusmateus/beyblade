@@ -45,3 +45,20 @@ thead th:last-child {
 thead th {
 	vertical-align: middle;
 }
+.firstColocation {
+	background: #ffbd1b;
+	height: 150px;
+}
+.secondColocation {
+	background: #c0c0c0;
+	height: 100px;
+}
+.thirdColocation {
+	background: #cd7f32;
+	height: 50px;
+}
+.quoteText {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 10px;
+}
