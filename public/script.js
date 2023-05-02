@@ -20,6 +20,36 @@ function generateBattles(first, second) {
 	}
 }
 
+// Seleciona o elemento select do seu HTML usando jQuery
+const selectElement = $("#selectionEdition");
+
+// Adiciona uma opção "Carregando..."
+const loadingOption = $("<option>");
+loadingOption.val("");
+loadingOption.text("Carregando...");
+selectElement.append(loadingOption);
+
+// Recupera uma referência do seu banco de dados
+const editionsRef = database.ref("edition");
+
+// Recupera os dados uma vez
+editionsRef.once("value", (snapshot) => {
+	// Remove a opção "Carregando..."
+	loadingOption.remove();
+
+	// Itera sobre todos os nós filhos do snapshot e adiciona uma nova opção ao select
+	snapshot.forEach((childSnapshot) => {
+		const key = childSnapshot.key;
+		const value = key;
+		const text = `${key}ª edição`;
+
+		const option = $("<option>");
+		option.val(value);
+		option.text(text);
+		selectElement.append(option);
+	});
+});
+
 $("#selectionEdition").on("change", function () {
 	let refPlayer = database.ref("edition/" + $(this).val() + "/players"),
 		refBeyblades = database.ref("edition/" + $(this).val() + "/beyblades");
@@ -130,3 +160,51 @@ $("#selectionEdition").on("change", function () {
 });
 
 // Usa o método Promise.all() para buscar os dados de ambos os nós juntos
+
+// Obtenha uma referência ao provedor do Google
+const provider = new firebase.auth.GoogleAuthProvider();
+
+// Registre o usuário com o provedor do Google
+$("#googleAuthButton").on("click", function () {
+	firebase
+		.auth()
+		.signInWithPopup(provider)
+		.then((result) => {
+			// O usuário foi registrado com sucesso
+			const user = result.user;
+			if (user.uid) {
+			}
+			console.log(user.uid);
+			$("#authModal").modal("hide");
+		})
+		.catch((error) => {
+			// Houve um erro ao registrar o usuário
+			console.error(error);
+		});
+});
+
+$(".signOutAuth").on("click", function () {
+	firebase
+		.auth()
+		.signOut()
+		.then(() => {})
+		.catch((error) => {
+			// Houve um erro ao deslogar o usuário
+			console.error(error);
+		});
+});
+
+// Verificar se o usuário já está logado ao carregar a página
+firebase.auth().onAuthStateChanged((user) => {
+	if (user) {
+		// O usuário já está logado
+		$(".adminButton").hide();
+		$(".signOutAuth").show();
+	} else {
+		// O usuário não está logado
+		$(".adminButton").show();
+		$(".signOutAuth").hide();
+	}
+});
+
+$("tbody tr td span").text("ok");

@@ -10,9 +10,8 @@ body {
 #fullPage {
 	background: url("cornerBottom.svg") no-repeat bottom right, url("cornerTop.svg") no-repeat top left;
 	background-size: 200px;
-	border: 1px solid #000;
-
 	width: 100%;
+	min-height: 100vh;
 }
 .bg-light {
 	background: black;
@@ -77,8 +76,18 @@ thead th {
 	border-bottom: 1px solid #fff;
 	padding: 10px;
 	color: #fff;
+	width: 150px;
 }
 #selectionEdition option {
 	background: #212529;
 	color: #fff;
+}
+.inputBattles {
+	padding: 10px;
+	background: transparent;
+	border: 0px;
+	color: white;
+	border-bottom: 1px solid #fff;
+	text-align: center;
+	width: 50px;
 }
