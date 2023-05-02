@@ -153,6 +153,8 @@ $("#selectionEdition").on("change", function () {
 					}
 				}
 			}
+
+			$("tbody tr td span").append('<input type="text" class="inputBattles" />');
 		})
 		.catch(function (error) {
 			console.log(error);
@@ -206,5 +208,3 @@ firebase.auth().onAuthStateChanged((user) => {
 		$(".signOutAuth").hide();
 	}
 });
-
-$("tbody tr td span").text("ok");
