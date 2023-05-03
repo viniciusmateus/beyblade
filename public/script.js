@@ -154,7 +154,63 @@ $("#selectionEdition").on("change", function () {
 				}
 			}
 
-			$("tbody tr td span").append('<input type="text" class="inputBattles" />');
+			auth.onAuthStateChanged(function (user) {
+				if (user) {
+					$("tbody tr td span .inputBattles").remove();
+					$("tbody tr td span").append("<input type='number' class='inputBattles'>");
+				} else {
+					$("tbody tr td span .inputBattles").remove();
+				}
+			});
+
+			$(document).ready(function () {
+				firebase
+					.database()
+					.ref("edition/" + $("#selectionEdition").val() + "/battles")
+					.once("value")
+					.then(function (snapshot) {
+						snapshot.forEach(function (childSnapshot) {
+							var divId = childSnapshot.key;
+							var div = $("#" + divId);
+
+							firebase
+								.database()
+								.ref("edition/" + $("#selectionEdition").val() + "/battles/" + divId)
+								.once("value")
+								.then(function (snapshot) {
+									var battleData = snapshot.val();
+
+									var players = Object.keys(battleData);
+									for (var i = 0; i < players.length; i++) {
+										var player = players[i];
+										var points = battleData[player].points;
+										var beyblade = battleData[player].beyblade;
+
+										$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " input").val(points);
+									}
+								});
+						});
+					});
+
+				$(".inputBattles").on("blur", function () {
+					let className = $(this).parent().attr("class"),
+						getBeyblade = keysBeyblades[className.at(-1)],
+						getPlayer = className.slice(0, -1),
+						getPoints = parseInt($(this).val()),
+						getBattle = $(this).parent().parent().parent().attr("id");
+
+					let battleScore = {
+						beyblade: getBeyblade,
+						points: getPoints,
+					};
+
+					database
+						.ref("edition/" + $("#selectionEdition").val() + "/battles")
+						.child(getBattle)
+						.child(getPlayer)
+						.set(battleScore);
+				});
+			});
 		})
 		.catch(function (error) {
 			console.log(error);
@@ -176,8 +232,8 @@ $("#googleAuthButton").on("click", function () {
 			const user = result.user;
 			if (user.uid) {
 			}
-			console.log(user.uid);
 			$("#authModal").modal("hide");
+			$("tbody tr td span").append('<input type="text" class="inputBattles" />');
 		})
 		.catch((error) => {
 			// Houve um erro ao registrar o usuário
@@ -189,7 +245,9 @@ $(".signOutAuth").on("click", function () {
 	firebase
 		.auth()
 		.signOut()
-		.then(() => {})
+		.then(() => {
+			$("tbody tr td span .inputBattles").remove();
+		})
 		.catch((error) => {
 			// Houve um erro ao deslogar o usuário
 			console.error(error);
