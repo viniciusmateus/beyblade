@@ -260,6 +260,7 @@ firebase.auth().onAuthStateChanged((user) => {
 		// O usuário já está logado
 		$(".adminButton").hide();
 		$(".signOutAuth").show();
+		$(".welcome").text("Olá " + auth.currentUser.displayName);
 	} else {
 		// O usuário não está logado
 		$(".adminButton").show();
