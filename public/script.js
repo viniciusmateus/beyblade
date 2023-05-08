@@ -332,7 +332,8 @@ $("#selectionEdition").on("change", function () {
 									.child(getBattle)
 									.child(getPlayer)
 									.set(null);
-								return false;
+
+								getPoints = 0;
 							}
 
 							let battleScore = {
@@ -354,6 +355,7 @@ $("#selectionEdition").on("change", function () {
 								.once("value")
 								.then(function (snapshot) {
 									database.ref("edition/" + getCookieValue("selectedEdition") + "/players").update(playersData);
+									console.log(beybladesData);
 									database.ref("edition/" + getCookieValue("selectedEdition") + "/beyblades").update(beybladesData);
 								})
 								.catch(function (error) {
