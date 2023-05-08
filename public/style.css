@@ -82,14 +82,26 @@ thead th {
 	background: #212529;
 	color: #fff;
 }
-.inputBattles {
+
+#removeEdition {
+	background: transparent;
+	border: 0px;
+	border-bottom: 1px solid #000;
 	padding: 10px;
+	color: #000;
+	width: 150px;
+}
+
+.inputBattles {
 	background: transparent;
 	border: 0px;
 	color: white;
 	border-bottom: 1px solid #fff;
 	text-align: center;
-	width: 50px;
+	width: 46px;
+}
+tbody td .points {
+	padding: 0px 10px;
 }
 table td {
 	vertical-align: middle;

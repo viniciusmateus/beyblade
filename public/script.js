@@ -13,42 +13,59 @@ function generateBattles(first, second) {
 			if (i != ii) {
 				battleCount++;
 				$("#" + keysBeyblades.indexOf(first) + keysBeyblades.indexOf(second) + " tbody").append(
-					'<tr id="battle' + battleCount + '"><td>' + keysPlayer[i] + '</td><td><span class="' + keysPlayer[i] + keysBeyblades.indexOf(first) + '"></span>vs<span class="' + keysPlayer[ii] + keysBeyblades.indexOf(second) + '"></span></td><td>' + keysPlayer[ii] + "</td></tr>"
+					'<tr id="battle' +
+						battleCount +
+						'"><td>' +
+						keysPlayer[i] +
+						'</td><td><span class="' +
+						keysPlayer[i] +
+						keysBeyblades.indexOf(first) +
+						'"><span class="points"></span></span>vs<span class="' +
+						keysPlayer[ii] +
+						keysBeyblades.indexOf(second) +
+						'"><span class="points"></span></span></td><td>' +
+						keysPlayer[ii] +
+						"</td></tr>"
 				);
 			}
 		}
 	}
 }
 
-// Seleciona o elemento select do seu HTML usando jQuery
-const selectElement = $("#selectionEdition");
+function pushEdition(select) {
+	// Seleciona o elemento select do seu HTML usando jQuery
+	const selectElement = $(select);
 
-// Adiciona uma opção "Carregando..."
-const loadingOption = $("<option>");
-loadingOption.val("");
-loadingOption.text("Carregando...");
-selectElement.append(loadingOption);
+	// Adiciona uma opção "Carregando..."
+	const loadingOption = $("<option disable>");
+	loadingOption.val("");
+	loadingOption.text("Carregando...");
+	selectElement.append(loadingOption);
 
-// Recupera uma referência do seu banco de dados
-const editionsRef = database.ref("edition");
+	// Recupera uma referência do seu banco de dados
+	const editionsRef = database.ref("edition");
 
-// Recupera os dados uma vez
-editionsRef.once("value", (snapshot) => {
-	// Remove a opção "Carregando..."
-	loadingOption.remove();
+	// Recupera os dados uma vez
+	editionsRef.once("value", (snapshot) => {
+		// Remove a opção "Carregando..."
+		loadingOption.remove();
 
-	// Itera sobre todos os nós filhos do snapshot e adiciona uma nova opção ao select
-	snapshot.forEach((childSnapshot) => {
-		const key = childSnapshot.key;
-		const value = key;
-		const text = `${key}ª edição`;
+		// Itera sobre todos os nós filhos do snapshot e adiciona uma nova opção ao select
+		snapshot.forEach((childSnapshot) => {
+			const key = childSnapshot.key;
+			const value = key;
+			const text = `${key}ª edição`;
 
-		const option = $("<option>");
-		option.val(value);
-		option.text(text);
-		selectElement.append(option);
+			const option = $("<option>");
+			option.val(value);
+			option.text(text);
+			selectElement.append(option);
+		});
 	});
-});
+}
+
+pushEdition("#selectionEdition");
+pushEdition("#removeEdition");
 
 $("#selectionEdition").on("change", function () {
 	let refPlayer = database.ref("edition/" + $(this).val() + "/players"),
@@ -154,15 +171,6 @@ $("#selectionEdition").on("change", function () {
 				}
 			}
 
-			auth.onAuthStateChanged(function (user) {
-				if (user) {
-					$("tbody tr td span .inputBattles").remove();
-					$("tbody tr td span").append("<input type='number' class='inputBattles'>");
-				} else {
-					$("tbody tr td span .inputBattles").remove();
-				}
-			});
-
 			$(document).ready(function () {
 				firebase
 					.database()
@@ -186,30 +194,73 @@ $("#selectionEdition").on("change", function () {
 										var points = battleData[player].points;
 										var beyblade = battleData[player].beyblade;
 
-										$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " input").val(points);
+										$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " .points").text(points);
 									}
 								});
 						});
 					});
+			});
 
-				$(".inputBattles").on("blur", function () {
-					let className = $(this).parent().attr("class"),
-						getBeyblade = keysBeyblades[className.at(-1)],
-						getPlayer = className.slice(0, -1),
-						getPoints = parseInt($(this).val()),
-						getBattle = $(this).parent().parent().parent().attr("id");
+			auth.onAuthStateChanged(function (user) {
+				if (user) {
+					$("tbody tr td span .inputBattles").remove();
+					$("tbody td .points").hide();
+					$("tbody tr td span").append("<input type='text' class='inputBattles'>");
 
-					let battleScore = {
-						beyblade: getBeyblade,
-						points: getPoints,
-					};
+					$(document).ready(function () {
+						firebase
+							.database()
+							.ref("edition/" + $("#selectionEdition").val() + "/battles")
+							.once("value")
+							.then(function (snapshot) {
+								snapshot.forEach(function (childSnapshot) {
+									var divId = childSnapshot.key;
+									var div = $("#" + divId);
 
-					database
-						.ref("edition/" + $("#selectionEdition").val() + "/battles")
-						.child(getBattle)
-						.child(getPlayer)
-						.set(battleScore);
-				});
+									firebase
+										.database()
+										.ref("edition/" + $("#selectionEdition").val() + "/battles/" + divId)
+										.once("value")
+										.then(function (snapshot) {
+											var battleData = snapshot.val();
+
+											var players = Object.keys(battleData);
+											for (var i = 0; i < players.length; i++) {
+												var player = players[i];
+												var points = battleData[player].points;
+												var beyblade = battleData[player].beyblade;
+
+												$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " input").val(points);
+											}
+										});
+								});
+							});
+
+						$(".inputBattles").mask("00");
+
+						$(".inputBattles").on("blur", function () {
+							let className = $(this).parent().attr("class"),
+								getBeyblade = keysBeyblades[className.at(-1)],
+								getPlayer = className.slice(0, -1),
+								getPoints = parseInt($(this).val()),
+								getBattle = $(this).parent().parent().parent().attr("id");
+
+							let battleScore = {
+								beyblade: getBeyblade,
+								points: getPoints,
+							};
+
+							database
+								.ref("edition/" + $("#selectionEdition").val() + "/battles")
+								.child(getBattle)
+								.child(getPlayer)
+								.set(battleScore);
+						});
+					});
+				} else {
+					$("tbody tr td span .inputBattles").remove();
+					$("tbody td .points").show();
+				}
 			});
 		})
 		.catch(function (error) {
@@ -254,6 +305,24 @@ $(".signOutAuth").on("click", function () {
 		});
 });
 
+$("#removeEdition").on("change", function () {
+	if ($(this).val() != null) {
+		$("#removeEditionBtn").attr({
+			"data-bs-toggle": "modal",
+			"data-bs-target": "#confirmnModal",
+		});
+	}
+});
+
+$("#removeEditionBtn").on("click", function () {
+	$(".showEdition").text($("#removeEdition").val() + "ª edição");
+});
+
+$("#confirmRemove").on("click", function () {
+	database.ref("/edition/" + $("#removeEdition").val()).remove();
+	$("#confirmnModal").modal("hide");
+});
+
 // Verificar se o usuário já está logado ao carregar a página
 firebase.auth().onAuthStateChanged((user) => {
 	if (user) {
@@ -265,5 +334,6 @@ firebase.auth().onAuthStateChanged((user) => {
 		// O usuário não está logado
 		$(".adminButton").show();
 		$(".signOutAuth").hide();
+		$(".welcome").text("");
 	}
 });
