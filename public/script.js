@@ -112,7 +112,7 @@ function pushEdition(select) {
 		// Adiciona a opção "Selecione a edição" como primeira opção
 		const defaultOption = $("<option>");
 		defaultOption.val("");
-		defaultOption.text("--");
+		defaultOption.text("Selecione");
 		selectElement.append(defaultOption);
 
 		// Itera sobre todos os nós filhos do snapshot e adiciona uma nova opção ao select
@@ -136,6 +136,8 @@ pushEdition("#manageEdition");
 // Comandos ao selecionar edições no menu
 $("#selectionEdition").on("change", function () {
 	document.cookie = "selectedEdition=" + $("#selectionEdition").val();
+
+	$("#selectionEdition option:eq(0)").remove();
 
 	// Definição de path para o DATABASE
 	let refPlayer = database.ref("edition/" + $(this).val() + "/players"),
@@ -452,16 +454,13 @@ $("#addEdition").on("click", function () {
 auth.onAuthStateChanged((user) => {
 	if (user) {
 		// O usuário já está logado
+		$(".dropdownManager").show().addClass("d-inline");
 		$(".adminButton").hide();
-		$(".signOutAuth").show();
-		$("#editionManager").show();
-
 		$(".welcome").text("Olá " + auth.currentUser.displayName);
 	} else {
 		// O usuário não está logado
+		$(".dropdownManager").hide().removeClass("d-inline");
 		$(".adminButton").show();
-		$(".signOutAuth").hide();
-		$("#editionManager").hide();
 		$(".welcome").text("");
 	}
 });

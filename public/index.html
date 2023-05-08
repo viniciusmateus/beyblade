@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 	<head>
 		<!-- Required meta tags -->
 		<meta charset="utf-8" />
@@ -19,17 +19,28 @@
 	<body>
 		<div id="fullPage" class="pb-5">
 			<div class="container text-center">
-				<div class="row bg-dark p-2">
-					<div class="d-flex align-items-center">
-						<div class="col text-white text-end">Selecione</div>
-						<div class="col text-start ms-2">
-							<select id="selectionEdition">
-								<option selected disabled>--</option>
-							</select>
-							<button type="button" class="btn btn-outline-secondary" id="editionManager" data-bs-toggle="modal" data-bs-target="#manageEditionModal" style="display:none;"><i class="fa-solid fa-gear"></i></button>
+				<div class=" p-2 d-flex justify-content-center">
+						<div class="col-12 col-md-3">	
+							<div class="input-group mb-3" >
+								<select class="form-select d-inline" id="selectionEdition">
+									<option selected disabled>Selecione</option>
+								</select>
+								<button type="button" class="btn btn-dark adminButton" data-bs-toggle="modal" data-bs-target="#authModal" style=" border-radius: 0px 0.25rem 0.25rem 0px !important;"><i class="fa-solid fa-key"></i> Login</button>
+								<div class="dropdown dropdownManager" style="display: none;">
+									<button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style=" border-radius: 0px 0.25rem 0.25rem 0px !important;">
+										<i class="fa-solid fa-wrench"></i> Painel 
+									</button>
+									<ul class="dropdown-menu bg-secondary" aria-labelledby="dropdownMenuButton1">
+									  <li><a class="dropdown-item text-white" href="#" data-bs-toggle="modal" data-bs-target="#manageEditionModal"><i class="fa-solid fa-gear"></i> Gerenciar</a></li>
+									  <li><a class="dropdown-item text-white signOutAuth" href="#"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></li>
+									</ul>
+								  </div>
+							  </div>
+
 						</div>
-					</div>
+					
 				</div>
+
 
 				<!-- Modal Edit Editions -->
 				<div class="modal fade" id="manageEditionModal" tabindex="-1">
@@ -49,12 +60,37 @@
 									<hr>
 									<div class="row">
 										<div class="col-6 border-end">
-											<span class="lead">Jogares</span>
+											<span class="lead">Jogadores</span>
 											<hr>
+											<div class="managePlayer">
+												<div>
+													<div class=" border-bottom border-secondary pt-2">
+														Carlos
+														<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-solid fa-circle-check"></i></button>
+														<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-regular fa-trash-can"></i></button></div>
+													
+													
+													
+												</div>
+												<div class="row mt-2 addBtn">
+													<div class="col">
+														<div class="d-grid gap-2 col-12 mx-auto">
+															<button class="btn btn-outline-dark"><i class="fa-solid fa-plus"></i> Adicionar</button>
+														</div>
+													</div>
+												</div>
+											</div>
+											
 										</div>
 										<div class="col-6">
 											<span class="lead">Beyblades</span>
 											<hr>
+											<div class="container manageBeyblades">
+												<div class="row">
+													<div class="col  border-bottom border-secondary pt-2">Carlos</div>
+													<div class="col-2"><button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-regular fa-trash-can"></i></button></div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -88,9 +124,9 @@
 					<span><img src="logo.png" alt="BeyBlade Burst Logo" /></span>
 					<h1 class="text-uppercase"><b>Campeonato Mundial de Curitiba</b></h1>
 					<h2 class="text-uppercase" style="display: none">
-						<span id="titleEdition"></span>ª edição <br /><button type="button" class="btn btn-outline-dark mt-2 adminButton" data-bs-toggle="modal" data-bs-target="#authModal">Gerenciar</button>
+						<span id="titleEdition"></span>ª edição <br />
 						<span class="welcome d-block lead"></span>
-						<button type="button" class="btn btn-outline-dark mt-2 signOutAuth" style="display: none">Sair</button>
+						
 					</h2>
 				</div>
 

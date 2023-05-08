@@ -71,16 +71,7 @@ thead th {
 	font-size: 10px;
 }
 #selectionEdition {
-	background: transparent;
-	border: 0px;
-	border-bottom: 1px solid #fff;
-	padding: 10px;
-	color: #fff;
 	width: 150px;
-}
-#selectionEdition option {
-	background: #212529;
-	color: #fff;
 }
 
 #manageEdition {
