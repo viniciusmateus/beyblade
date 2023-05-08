@@ -26,13 +26,13 @@
 							<select id="selectionEdition">
 								<option selected disabled>--</option>
 							</select>
-							<button type="button" class="btn btn-outline-secondary" id="editionManager" data-bs-toggle="modal" data-bs-target="#addEditionModal"><i class="fa-solid fa-gear"></i></button>
+							<button type="button" class="btn btn-outline-secondary" id="editionManager" data-bs-toggle="modal" data-bs-target="#manageEditionModal" style="display:none;"><i class="fa-solid fa-gear"></i></button>
 						</div>
 					</div>
 				</div>
 
 				<!-- Modal Edit Editions -->
-				<div class="modal fade" id="addEditionModal" tabindex="-1">
+				<div class="modal fade" id="manageEditionModal" tabindex="-1">
 					<div class="modal-dialog  modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -40,12 +40,24 @@
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
-								<button type="button" class="btn btn-outline-dark" id="addEdition"><i class="fa-solid fa-plus"></i> Adicionar nova edição</button>
-								<hr>
-								<select id="removeEdition">
+								<select id="manageEdition">
 									<option selected disabled>--</option>
 								</select>
-								<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-solid fa-plus"></i> Remover edição</button>
+								<button type="button" class="btn btn-outline-dark" id="addEdition"><i class="fa-solid fa-plus"></i></button>
+								<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-regular fa-trash-can"></i></button>
+								<div>
+									<hr>
+									<div class="row">
+										<div class="col-6 border-end">
+											<span class="lead">Jogares</span>
+											<hr>
+										</div>
+										<div class="col-6">
+											<span class="lead">Beyblades</span>
+											<hr>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -53,7 +65,7 @@
 				
 
 				<!-- Modal Confirm Editions -->
-				<div class="modal fade" id="confirmnModal" tabindex="-1">
+				<div class="modal fade" id="confirmModal" tabindex="-1">
 					<div class="modal-dialog  modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -62,9 +74,10 @@
 							</div>
 							<div class="modal-body">
 								Tem certeza que deseja remover:
-								<p class="showEdition"><b>1</b></p>
+								<p class="showEdition lead"></p>
 							</div>
 							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#manageEditionModal">Cancelar</button>
 								<button type="button" class="btn btn-secondary" id="confirmRemove">Confirmar</button>
 							</div>
 						</div>

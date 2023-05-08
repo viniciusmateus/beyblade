@@ -83,7 +83,7 @@ thead th {
 	color: #fff;
 }
 
-#removeEdition {
+#manageEdition {
 	background: transparent;
 	border: 0px;
 	border-bottom: 1px solid #000;
@@ -105,4 +105,9 @@ tbody td .points {
 }
 table td {
 	vertical-align: middle;
+}
+.showEdition {
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 10px 0px;
 }

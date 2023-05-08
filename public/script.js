@@ -1,13 +1,16 @@
-// Cria as Promises para buscar os dados dos dois nós
+// Variáveis iniciais
 let keysPlayer,
 	keysBeyblades,
 	battleCount = 0;
 
+// Função para listar em tabelas todas as batalhas possíveis
 function generateBattles(first, second) {
+	// Adiciona uma tabela a página
 	$("#fullPage .container").append(
 		'<table id="' + keysBeyblades.indexOf(first) + keysBeyblades.indexOf(second) + '" class="table table-dark table-adjust mt-3"><thead><tr><th scope="col">' + first + '</th><th></th><th scope="col">' + second + '</th></tr></thead><tbody class="lead"></tbody></table>'
 	);
 
+	// Loop de preenchimento da tabela
 	for (let i = 0; i < keysPlayer.length; i++) {
 		for (let ii = 0; ii < keysPlayer.length; ii++) {
 			if (i != ii) {
@@ -32,6 +35,62 @@ function generateBattles(first, second) {
 	}
 }
 
+function getCookieValue(cookieName) {
+	// Obtem todos os cookies
+	const cookies = document.cookie.split("; ");
+
+	// Procura pelo cookie desejado
+	for (let i = 0; i < cookies.length; i++) {
+		const [name, value] = cookies[i].split("=");
+		if (name === cookieName) {
+			return value;
+		}
+	}
+
+	// Retorna null se o cookie não foi encontrado
+	return null;
+}
+
+let playersData = {},
+	beybladesData = {};
+
+function processBattlesData(target) {
+	playersData = {};
+	beybladesData = {};
+	database
+		.ref("edition/" + target + "/battles")
+		.once("value")
+		.then(function (snapshot) {
+			let battles = snapshot.val();
+
+			// Itera sobre cada batalha
+			for (let battleId in battles) {
+				let battle = battles[battleId];
+
+				// Itera sobre cada jogador na batalha
+				for (let player in battle) {
+					let points = battle[player].points,
+						beyblade = battle[player].beyblade;
+
+					// Soma os pontos do jogador
+					if (playersData[player]) {
+						playersData[player] += points;
+					} else {
+						playersData[player] = points;
+					}
+
+					// Soma os pontos da beyblade
+					if (beybladesData[beyblade]) {
+						beybladesData[beyblade] += points;
+					} else {
+						beybladesData[beyblade] = points;
+					}
+				}
+			}
+		});
+}
+
+// Função para puxar a listagem de todas edições do DATABASE e adicionar uma opção de carregamento
 function pushEdition(select) {
 	// Seleciona o elemento select do seu HTML usando jQuery
 	const selectElement = $(select);
@@ -45,10 +104,16 @@ function pushEdition(select) {
 	// Recupera uma referência do seu banco de dados
 	const editionsRef = database.ref("edition");
 
-	// Recupera os dados uma vez
-	editionsRef.once("value", (snapshot) => {
-		// Remove a opção "Carregando..."
-		loadingOption.remove();
+	// Recupera os dados em tempo real usando o método "on"
+	editionsRef.on("value", (snapshot) => {
+		// Remove todas as opções do select antes de adicionar as novas opções
+		selectElement.empty();
+
+		// Adiciona a opção "Selecione a edição" como primeira opção
+		const defaultOption = $("<option>");
+		defaultOption.val("");
+		defaultOption.text("--");
+		selectElement.append(defaultOption);
 
 		// Itera sobre todos os nós filhos do snapshot e adiciona uma nova opção ao select
 		snapshot.forEach((childSnapshot) => {
@@ -64,22 +129,30 @@ function pushEdition(select) {
 	});
 }
 
+// Execução das funções nos campos select
 pushEdition("#selectionEdition");
-pushEdition("#removeEdition");
+pushEdition("#manageEdition");
 
+// Comandos ao selecionar edições no menu
 $("#selectionEdition").on("change", function () {
+	document.cookie = "selectedEdition=" + $("#selectionEdition").val();
+
+	// Definição de path para o DATABASE
 	let refPlayer = database.ref("edition/" + $(this).val() + "/players"),
 		refBeyblades = database.ref("edition/" + $(this).val() + "/beyblades");
 	promise1 = refPlayer.once("value");
 	promise2 = refBeyblades.once("value");
 
+	// Limpeza de dados da página
 	$("#fullPage .container table").remove();
 
+	// Efeito de transição
 	$("#titleEdition").text($(this).val()).parent().fadeIn();
 
 	//Adiciona função de aparecer somente se houver resultados
 	$(".podiums").fadeIn();
 
+	// Função de criação dos podiums
 	function getPodiums(database, target) {
 		let topRef = database.orderByValue().limitToLast(3),
 			i = 3,
@@ -150,9 +223,11 @@ $("#selectionEdition").on("change", function () {
 		});
 	}
 
+	// Execução das funções para criação dos podiums
 	getPodiums(refBeyblades, "#podiumBeyblade");
 	getPodiums(refPlayer, "#podiumPlayer");
 
+	// Coleta de dados do DATABASE para construção das tabelas de batalhas
 	Promise.all([promise1, promise2])
 		.then(function (results) {
 			// Os resultados são retornados como um array de snapshots
@@ -171,70 +246,75 @@ $("#selectionEdition").on("change", function () {
 				}
 			}
 
-			$(document).ready(function () {
-				firebase
-					.database()
+			// Função obter pontuações das batalhas
+			function getPoints(target) {
+				database
 					.ref("edition/" + $("#selectionEdition").val() + "/battles")
 					.once("value")
 					.then(function (snapshot) {
 						snapshot.forEach(function (childSnapshot) {
-							var divId = childSnapshot.key;
-							var div = $("#" + divId);
+							let divId = childSnapshot.key,
+								div = $("#" + divId);
 
-							firebase
-								.database()
+							database
 								.ref("edition/" + $("#selectionEdition").val() + "/battles/" + divId)
 								.once("value")
 								.then(function (snapshot) {
-									var battleData = snapshot.val();
+									let battleData = snapshot.val();
 
-									var players = Object.keys(battleData);
-									for (var i = 0; i < players.length; i++) {
-										var player = players[i];
-										var points = battleData[player].points;
-										var beyblade = battleData[player].beyblade;
+									let players = Object.keys(battleData);
+									for (let i = 0; i < players.length; i++) {
+										let player = players[i],
+											points = battleData[player].points,
+											beyblade = battleData[player].beyblade;
 
-										$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " .points").text(points);
+										$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " " + target).val(points);
+									}
+								});
+						});
+					});
+			}
+
+			// Executa a função e preenche os campos
+			$(document).ready(function () {
+				database
+					.ref("edition/" + $("#selectionEdition").val() + "/battles")
+					.once("value")
+					.then(function (snapshot) {
+						snapshot.forEach(function (childSnapshot) {
+							let divId = childSnapshot.key,
+								div = $("#" + divId);
+
+							database
+								.ref("edition/" + $("#selectionEdition").val() + "/battles/" + divId)
+								.once("value")
+								.then(function (snapshot) {
+									let battleData = snapshot.val();
+
+									let players = Object.keys(battleData);
+									for (let i = 0; i < players.length; i++) {
+										let player = players[i],
+											points = battleData[player].points,
+											beyblade = battleData[player].beyblade;
+
+										$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " .points")
+											.val(points)
+											.text(points);
 									}
 								});
 						});
 					});
 			});
 
+			// Executa comandos quando entra no sistema
 			auth.onAuthStateChanged(function (user) {
 				if (user) {
-					$("tbody tr td span .inputBattles").remove();
+					$("tbody tr td>span .inputBattles").remove();
 					$("tbody td .points").hide();
-					$("tbody tr td span").append("<input type='text' class='inputBattles'>");
+					$("tbody tr td>span").append("<input type='text' class='inputBattles'>");
 
 					$(document).ready(function () {
-						firebase
-							.database()
-							.ref("edition/" + $("#selectionEdition").val() + "/battles")
-							.once("value")
-							.then(function (snapshot) {
-								snapshot.forEach(function (childSnapshot) {
-									var divId = childSnapshot.key;
-									var div = $("#" + divId);
-
-									firebase
-										.database()
-										.ref("edition/" + $("#selectionEdition").val() + "/battles/" + divId)
-										.once("value")
-										.then(function (snapshot) {
-											var battleData = snapshot.val();
-
-											var players = Object.keys(battleData);
-											for (var i = 0; i < players.length; i++) {
-												var player = players[i];
-												var points = battleData[player].points;
-												var beyblade = battleData[player].beyblade;
-
-												$("#" + div.attr("id") + " ." + player + keysBeyblades.indexOf(beyblade) + " input").val(points);
-											}
-										});
-								});
-							});
+						getPoints("input");
 
 						$(".inputBattles").mask("00");
 
@@ -243,7 +323,17 @@ $("#selectionEdition").on("change", function () {
 								getBeyblade = keysBeyblades[className.at(-1)],
 								getPlayer = className.slice(0, -1),
 								getPoints = parseInt($(this).val()),
-								getBattle = $(this).parent().parent().parent().attr("id");
+								getBattle = $(this).parent().parent().parent().attr("id"),
+								selectedEdition = getCookieValue("selectedEdition");
+
+							if (isNaN(getPoints)) {
+								database
+									.ref("edition/" + selectedEdition + "/battles")
+									.child(getBattle)
+									.child(getPlayer)
+									.set(null);
+								return false;
+							}
 
 							let battleScore = {
 								beyblade: getBeyblade,
@@ -251,10 +341,25 @@ $("#selectionEdition").on("change", function () {
 							};
 
 							database
-								.ref("edition/" + $("#selectionEdition").val() + "/battles")
+								.ref("edition/" + selectedEdition + "/battles")
 								.child(getBattle)
 								.child(getPlayer)
 								.set(battleScore);
+
+							processBattlesData(selectedEdition);
+							$("#selectionEdition").val(selectedEdition);
+
+							database
+								.ref("edition/" + selectedEdition + "/battles")
+								.once("value")
+								.then(function (snapshot) {
+									database.ref("edition/" + getCookieValue("selectedEdition") + "/players").update(playersData);
+									database.ref("edition/" + getCookieValue("selectedEdition") + "/beyblades").update(beybladesData);
+								})
+								.catch(function (error) {
+									// Ocorreu um erro ao obter os dados
+									console.error(error);
+								});
 						});
 					});
 				} else {
@@ -266,6 +371,8 @@ $("#selectionEdition").on("change", function () {
 		.catch(function (error) {
 			console.log(error);
 		});
+
+	processBattlesData($("#selectionEdition").val());
 });
 
 // Usa o método Promise.all() para buscar os dados de ambos os nós juntos
@@ -275,9 +382,7 @@ const provider = new firebase.auth.GoogleAuthProvider();
 
 // Registre o usuário com o provedor do Google
 $("#googleAuthButton").on("click", function () {
-	firebase
-		.auth()
-		.signInWithPopup(provider)
+	auth.signInWithPopup(provider)
 		.then((result) => {
 			// O usuário foi registrado com sucesso
 			const user = result.user;
@@ -293,9 +398,7 @@ $("#googleAuthButton").on("click", function () {
 });
 
 $(".signOutAuth").on("click", function () {
-	firebase
-		.auth()
-		.signOut()
+	auth.signOut()
 		.then(() => {
 			$("tbody tr td span .inputBattles").remove();
 		})
@@ -305,35 +408,58 @@ $(".signOutAuth").on("click", function () {
 		});
 });
 
-$("#removeEdition").on("change", function () {
+$("#manageEdition").on("change", function () {
 	if ($(this).val() != null) {
 		$("#removeEditionBtn").attr({
 			"data-bs-toggle": "modal",
-			"data-bs-target": "#confirmnModal",
+			"data-bs-target": "#confirmModal",
 		});
 	}
 });
 
 $("#removeEditionBtn").on("click", function () {
-	$(".showEdition").text($("#removeEdition").val() + "ª edição");
+	$(".showEdition").text($("#manageEdition").val() + "ª edição");
 });
 
 $("#confirmRemove").on("click", function () {
-	database.ref("/edition/" + $("#removeEdition").val()).remove();
-	$("#confirmnModal").modal("hide");
+	database.ref("/edition/" + $("#manageEdition").val()).remove();
+	$("#confirmModal").modal("hide");
+	$("#manageEditionModal").modal("show");
+});
+
+$("#addEdition").on("click", function () {
+	// Get the latest child node and create a new node with an incremented number
+	database
+		.ref("edition")
+		.limitToLast(1)
+		.once("child_added", function (snapshot) {
+			const lastKey = snapshot.key;
+			const newKey = parseInt(lastKey) + 1;
+			const newNodeRef = database.ref("edition").child(newKey);
+
+			// Set the data for the new node
+			newNodeRef.set({
+				battles: "",
+				beyblades: "",
+				players: "",
+			});
+		});
 });
 
 // Verificar se o usuário já está logado ao carregar a página
-firebase.auth().onAuthStateChanged((user) => {
+auth.onAuthStateChanged((user) => {
 	if (user) {
 		// O usuário já está logado
 		$(".adminButton").hide();
 		$(".signOutAuth").show();
+		$("#editionManager").show();
+
 		$(".welcome").text("Olá " + auth.currentUser.displayName);
 	} else {
 		// O usuário não está logado
 		$(".adminButton").show();
 		$(".signOutAuth").hide();
+		$("#editionManager").hide();
 		$(".welcome").text("");
 	}
 });
