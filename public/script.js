@@ -421,9 +421,9 @@ $("#manageEdition").on("change", function () {
 	}
 
 	function getListKeys(path, target) {
-		$("." + target).empty();
 		//adicionando um listener para o evento "value"
 		database.ref("edition/" + $("#manageEdition").val() + "/" + path).on("value", function (snapshot) {
+			$("." + target).empty();
 			//iterando sobre os filhos do snapshot usando forEach
 			snapshot.forEach(function (childSnapshot) {
 				$("." + target).append(
