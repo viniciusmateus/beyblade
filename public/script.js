@@ -419,7 +419,54 @@ $("#manageEdition").on("change", function () {
 			"data-bs-target": "#confirmModal",
 		});
 	}
+
+	function getListKeys(path, target) {
+		$("." + target).empty();
+		//adicionando um listener para o evento "value"
+		database.ref("edition/" + $("#manageEdition").val() + "/" + path).on("value", function (snapshot) {
+			//iterando sobre os filhos do snapshot usando forEach
+			snapshot.forEach(function (childSnapshot) {
+				$("." + target).append(
+					'<div class="row ms-1 mt-1"><input class="manageInput" value="' +
+						childSnapshot.key +
+						'"></input><div class="col"><button type="button" class="btn btn-outline-dark updateLineBtn"><i class="fa-solid fa-circle-check"></i></button> <button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button></div></div>'
+				);
+			});
+		});
+		$("." + target).append('<div class="row mt-2 addBtn"><div class="col"><div class="d-grid gap-2 col-12 mx-auto"><button class="btn btn-outline-dark"><i class="fa-solid fa-plus"></i> Adicionar</button></div></div></div>');
+		$(".manageInput").mask("AAAAAAAAAAAA");
+	}
+
+	getListKeys("players", "managePlayer");
+	getListKeys("beyblades", "manageBeyblades");
+
+	$("#manageEdition option:eq(0)").remove();
+	$(".manageInfos").fadeIn();
 });
+
+$(".col-6.border-end").on("click", ".removeLineBtn", function () {
+	let input = $(this).closest(".row").find(".manageInput");
+	let inputValue = input.val();
+	let targetDatabase = $(this).closest(".row").parent().data("target-update");
+
+	console.log("Valor do input:", inputValue);
+	console.log("Nome da key:", targetDatabase);
+	console.log("Caminho da key:", "edition/" + $("#manageEdition").val() + "/" + targetDatabase);
+
+	var playerName = $(input).val();
+
+	database.ref("edition/" + getCookieValue("selectedEdition") + "/players/" + playerName).remove(function (error) {
+		if (error) {
+			console.error("Erro ao remover jogador:", error);
+		} else {
+			console.log("Jogador removido com sucesso!");
+		}
+	});
+});
+
+// console.log(targetDatabase);
+// //imprime o valor do input no console
+// console.log(input.val());
 
 $("#removeEditionBtn").on("click", function () {
 	$(".showEdition").text($("#manageEdition").val() + "ª edição");

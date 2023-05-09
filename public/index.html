@@ -20,7 +20,7 @@
 		<div id="fullPage" class="pb-5">
 			<div class="container text-center">
 				<div class=" p-2 d-flex justify-content-center">
-						<div class="col-12 col-md-3">	
+						<div class="col-12 col-md-5">	
 							<div class="input-group mb-3" >
 								<select class="form-select d-inline" id="selectionEdition">
 									<option selected disabled>Selecione</option>
@@ -58,38 +58,29 @@
 								<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-regular fa-trash-can"></i></button>
 								<div>
 									<hr>
-									<div class="row">
+									<div class="row manageInfos mt-3" style="display: none;">
+										
 										<div class="col-6 border-end">
 											<span class="lead">Jogadores</span>
 											<hr>
-											<div class="managePlayer">
-												<div>
-													<div class=" border-bottom border-secondary pt-2">
-														Carlos
-														<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-solid fa-circle-check"></i></button>
-														<button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-regular fa-trash-can"></i></button></div>
-													
-													
-													
-												</div>
-												<div class="row mt-2 addBtn">
-													<div class="col">
-														<div class="d-grid gap-2 col-12 mx-auto">
-															<button class="btn btn-outline-dark"><i class="fa-solid fa-plus"></i> Adicionar</button>
-														</div>
+											<div class="managePlayer" data-target-update="players">
+												<!-- <div class="row ms-1">
+													<div class="border-bottom border-secondary pt-2 col">
+														Vinicius
 													</div>
-												</div>
+													<div class="col">
+														<button type="button" class="btn btn-outline-dark updateLineBtn"><i class="fa-solid fa-circle-check"></i></button>
+														<button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button>
+													</div>
+												</div> -->
+												
 											</div>
-											
 										</div>
-										<div class="col-6">
+										<div class="col-6 border-end">
 											<span class="lead">Beyblades</span>
 											<hr>
-											<div class="container manageBeyblades">
-												<div class="row">
-													<div class="col  border-bottom border-secondary pt-2">Carlos</div>
-													<div class="col-2"><button type="button" class="btn btn-outline-dark" id="removeEditionBtn"><i class="fa-regular fa-trash-can"></i></button></div>
-												</div>
+											<div class="manageBeyblades" data-target-update="beyblades">
+												
 											</div>
 										</div>
 									</div>

@@ -82,7 +82,13 @@ thead th {
 	color: #000;
 	width: 150px;
 }
+.manageInput {
+	background: transparent;
+	border: 0px;
+	border-bottom: 1px solid #000;
 
+	width: 118px;
+}
 .inputBattles {
 	background: transparent;
 	border: 0px;
