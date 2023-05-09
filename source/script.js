@@ -35,6 +35,8 @@ function generateBattles(first, second) {
 	}
 }
 
+// Função criar cookie para o input SELECT
+
 function getCookieValue(cookieName) {
 	// Obtem todos os cookies
 	const cookies = document.cookie.split("; ");
@@ -137,8 +139,6 @@ pushEdition("#manageEdition");
 $("#selectionEdition").on("change", function () {
 	document.cookie = "selectedEdition=" + $("#selectionEdition").val();
 
-	$("#selectionEdition option:eq(0)").remove();
-
 	// Definição de path para o DATABASE
 	let refPlayer = database.ref("edition/" + $(this).val() + "/players"),
 		refBeyblades = database.ref("edition/" + $(this).val() + "/beyblades");
@@ -157,7 +157,7 @@ $("#selectionEdition").on("change", function () {
 	// Função de criação dos podiums
 	function getPodiums(database, target) {
 		let topRef = database.orderByValue().limitToLast(3),
-			i = 3,
+			i = 1,
 			text;
 
 		topRef.on("value", function (snapshot) {
@@ -169,13 +169,13 @@ $("#selectionEdition").on("change", function () {
 					refPoints = childSnapshot.val();
 
 				switch (i) {
-					case 1:
+					case 3:
 						text = "firstColocation";
 						break;
 					case 2:
 						text = "secondColocation";
 						break;
-					case 3:
+					case 1:
 						text = "thirdColocation";
 						break;
 				}
@@ -187,7 +187,7 @@ $("#selectionEdition").on("change", function () {
 					text: text,
 				});
 
-				i--;
+				i++;
 			});
 
 			// Ordena o array pelos pontos em ordem decrescente
@@ -247,6 +247,7 @@ $("#selectionEdition").on("change", function () {
 					}
 				}
 			}
+			battleCount = 0;
 
 			// Função obter pontuações das batalhas
 			function getPoints(target) {
@@ -326,7 +327,7 @@ $("#selectionEdition").on("change", function () {
 								getPlayer = className.slice(0, -1),
 								getPoints = parseInt($(this).val()),
 								getBattle = $(this).parent().parent().parent().attr("id"),
-								selectedEdition = getCookieValue("selectedEdition");
+								selectedEdition = $("#selectionEdition").val();
 
 							if (isNaN(getPoints)) {
 								database
@@ -344,21 +345,20 @@ $("#selectionEdition").on("change", function () {
 							};
 
 							database
-								.ref("edition/" + selectedEdition + "/battles")
+								.ref("edition/" + $("#selectionEdition").val() + "/battles")
 								.child(getBattle)
 								.child(getPlayer)
 								.set(battleScore);
 
 							processBattlesData(selectedEdition);
-							$("#selectionEdition").val(selectedEdition);
 
 							database
 								.ref("edition/" + selectedEdition + "/battles")
 								.once("value")
 								.then(function (snapshot) {
 									database.ref("edition/" + getCookieValue("selectedEdition") + "/players").update(playersData);
-									console.log(beybladesData);
 									database.ref("edition/" + getCookieValue("selectedEdition") + "/beyblades").update(beybladesData);
+									$("#selectionEdition").val(selectedEdition);
 								})
 								.catch(function (error) {
 									// Ocorreu um erro ao obter os dados
@@ -435,15 +435,13 @@ $("#manageEdition").on("change", function () {
 	getListKeys("players", "managePlayer");
 	getListKeys("beyblades", "manageBeyblades");
 
-	$("#manageEdition option:eq(0)").remove();
 	$(".manageInfos").fadeIn();
 });
 
 $(".col-6.border-end").on("click", ".addBtn button", function () {
 	let target = $(this).closest(".row").parent().attr("class");
 
-	$("." + target).append('<div class="row ms-1 mt-1"><input class="manageInput pt-2 text-center"></input><div class="col"><button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button></div></div>');
-	$(".manageInput").mask("AAAAAAAAAAAA");
+	$("." + target).append('<div class="row ms-1 mt-1"><input class="manageInput pt-2 text-center" maxlength="18"></input><div class="col"><button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button></div></div>');
 
 	$(this).remove();
 });
@@ -463,10 +461,15 @@ $(".col-6.border-end").on("blur", "input.manageInput", function () {
 		});
 		//agora você pode adicionar uma nova chave aos dados no array
 		data.push(target);
-		//e reenviar os dados atualizados para o database
-		database.ref("edition/" + $("#manageEdition").val() + "/" + targetDatabase).set(data);
+		//transformando o array em um objeto com chaves iguais aos valores do array
+		var newData = data.reduce(function (result, item) {
+			result[item] = "";
+			return result;
+		}, {});
 
-		console.log(data);
+		//e reenviar os dados atualizados para o database com as chaves iguais aos valores do array
+		database.ref("edition/" + $("#manageEdition").val() + "/" + targetDatabase).set(newData);
+		$("#manageEdition").val(manageEdition);
 	});
 
 	// $(this).remove();
@@ -481,7 +484,6 @@ $(".col-6.border-end").on("click", ".removeLineBtn", function () {
 	database.ref("edition/" + $("#manageEdition").val() + "/" + targetDatabase + "/" + playerName).remove(function (error) {
 		if (!error) {
 			$("#manageEdition").val(manageEdition);
-			$("#manageEdition option:eq(0)").remove();
 		}
 	});
 });

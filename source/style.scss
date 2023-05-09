@@ -41,7 +41,8 @@ tbody.lead td:last-child,
 thead th:last-child {
 	text-align: left;
 }
-thead th {
+thead th,
+table td {
 	vertical-align: middle;
 }
 .firstColocation {
@@ -86,7 +87,6 @@ thead th {
 	background: transparent;
 	border: 0px;
 	border-bottom: 1px solid #000;
-
 	width: 160px;
 }
 .inputBattles {
@@ -95,13 +95,10 @@ thead th {
 	color: white;
 	border-bottom: 1px solid #fff;
 	text-align: center;
-	width: 46px;
+	width: 40px;
 }
 tbody td .points {
 	padding: 0px 10px;
-}
-table td {
-	vertical-align: middle;
 }
 .showEdition {
 	font-weight: bold;
