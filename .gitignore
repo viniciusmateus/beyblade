@@ -1,4 +1,7 @@
 public/node_modules
+public/prepros.config
+public/package-lock.json
+public/package.json
 
 # Logs
 logs
