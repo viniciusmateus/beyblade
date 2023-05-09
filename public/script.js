@@ -426,15 +426,10 @@ $("#manageEdition").on("change", function () {
 			$("." + target).empty();
 			//iterando sobre os filhos do snapshot usando forEach
 			snapshot.forEach(function (childSnapshot) {
-				$("." + target).append(
-					'<div class="row ms-1 mt-1"><input class="manageInput" value="' +
-						childSnapshot.key +
-						'"></input><div class="col"><button type="button" class="btn btn-outline-dark updateLineBtn"><i class="fa-solid fa-circle-check"></i></button> <button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button></div></div>'
-				);
+				$("." + target).append('<div class="row ms-1 mt-1"><span class="manageInput pt-2">' + childSnapshot.key + '</span><div class="col"><button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button></div></div>');
 			});
+			$("." + target).append('<div class="row mt-2 addBtn"><div class="col"><div class="d-grid gap-2 col-12 mx-auto"><button class="btn btn-outline-dark"><i class="fa-solid fa-plus"></i> Adicionar</button></div></div></div>');
 		});
-		$("." + target).append('<div class="row mt-2 addBtn"><div class="col"><div class="d-grid gap-2 col-12 mx-auto"><button class="btn btn-outline-dark"><i class="fa-solid fa-plus"></i> Adicionar</button></div></div></div>');
-		$(".manageInput").mask("AAAAAAAAAAAA");
 	}
 
 	getListKeys("players", "managePlayer");
@@ -444,29 +439,52 @@ $("#manageEdition").on("change", function () {
 	$(".manageInfos").fadeIn();
 });
 
+$(".col-6.border-end").on("click", ".addBtn button", function () {
+	let target = $(this).closest(".row").parent().attr("class");
+
+	$("." + target).append('<div class="row ms-1 mt-1"><input class="manageInput pt-2 text-center"></input><div class="col"><button type="button" class="btn btn-outline-dark removeLineBtn"><i class="fa-regular fa-trash-can"></i></button></div></div>');
+	$(".manageInput").mask("AAAAAAAAAAAA");
+
+	$(this).remove();
+});
+
+$(".col-6.border-end").on("blur", "input.manageInput", function () {
+	let target = $(this).val(),
+		targetDatabase = $(this).closest(".row").parent().data("target-update"),
+		manageEdition = $("#manageEdition").val();
+
+	database.ref("edition/" + $("#manageEdition").val() + "/" + targetDatabase).once("value", function (snapshot) {
+		//criando um array vazio
+		var data = [];
+		//iterando sobre os filhos do snapshot usando forEach
+		snapshot.forEach(function (childSnapshot) {
+			//adicionando cada filho no array
+			data.push(childSnapshot.key);
+		});
+		//agora você pode adicionar uma nova chave aos dados no array
+		data.push(target);
+		//e reenviar os dados atualizados para o database
+		database.ref("edition/" + $("#manageEdition").val() + "/" + targetDatabase).set(data);
+
+		console.log(data);
+	});
+
+	// $(this).remove();
+});
+
 $(".col-6.border-end").on("click", ".removeLineBtn", function () {
-	let input = $(this).closest(".row").find(".manageInput");
-	let inputValue = input.val();
-	let targetDatabase = $(this).closest(".row").parent().data("target-update");
+	let input = $(this).closest(".row").find(".manageInput"),
+		playerName = $(input).text(),
+		targetDatabase = $(this).closest(".row").parent().data("target-update"),
+		manageEdition = $("#manageEdition").val();
 
-	console.log("Valor do input:", inputValue);
-	console.log("Nome da key:", targetDatabase);
-	console.log("Caminho da key:", "edition/" + $("#manageEdition").val() + "/" + targetDatabase);
-
-	var playerName = $(input).val();
-
-	database.ref("edition/" + getCookieValue("selectedEdition") + "/players/" + playerName).remove(function (error) {
-		if (error) {
-			console.error("Erro ao remover jogador:", error);
-		} else {
-			console.log("Jogador removido com sucesso!");
+	database.ref("edition/" + $("#manageEdition").val() + "/" + targetDatabase + "/" + playerName).remove(function (error) {
+		if (!error) {
+			$("#manageEdition").val(manageEdition);
+			$("#manageEdition option:eq(0)").remove();
 		}
 	});
 });
-
-// console.log(targetDatabase);
-// //imprime o valor do input no console
-// console.log(input.val());
 
 $("#removeEditionBtn").on("click", function () {
 	$(".showEdition").text($("#manageEdition").val() + "ª edição");
